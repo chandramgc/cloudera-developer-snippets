@@ -1,0 +1,37 @@
+Properties files
+	* /etc/hadoop/conf/core-site.xml
+	* /etc/hadoop/conf/hdfs-site.xml
+Important Properties
+	* fs.defaultFS
+	* dfs.blocksize
+	* dfs.replication
+HDFS commands
+	* Copying Files
+		From Local file system (hadoop fs -put)
+		To Local file system (hadoop fs -get)
+		From one HDFS location to other (hadoop fs -cp)
+	Listing file (hadoop fs -ls)
+	Previewing date from files (hadoop fs -tail)
+	Checking sizes of the file (hadoop fs -du)
+	
+To check the memory configuration to understand the cluster capacity
+	* /etc/hadoop/conf/yarn-site.xml
+	* /etc/hadoop/conf/spark-env.sh
+	
+Spark default settings
+	* Number of executor-2
+	* Memory-1GB
+	
+hadoop fs -du -s -h /user/hduser/data/
+hdfs fsck /user/hduser/crime -files -blocks -locations
+	
+
+Commands:
+-------------------------------------------------------------------
+
+hadoop version
+	
+If you want to create a home directory for root so you can store files in his directory, do:
+
+sudo -u hdfs hadoop fs -mkdir /user/hduser
+sudo -u hdfs hadoop fs -chown root /user/hduser

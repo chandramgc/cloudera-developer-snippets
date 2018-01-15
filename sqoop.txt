@@ -1,0 +1,71 @@
+sqoop version
+
+MySQL v5.0 and above offers very thorough coverage by Sqoop. Sqoop has been tested with mysql-connector-java-5.1.13-bin.jar.
+
+copy mysql-connector-java to this location 
+cp ./mysql-connector-java /opt/cloudera/parcels/CDH-5.13.1-1.cdh5.13.1.p0.2/lib/sqoop/lib/
+
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568
+sqoop list-databases \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568
+sqoop list-tables \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb  \
+	--username girish \
+	--password Artha@568	
+sqoop eval \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--query "SELECT * FROM customer LIMIT 10"
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer \
+	--warehouse-dir /user/hduser/sqoop_import
+	--delete-target-dir
+	--num-mappers 3
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer_nopk \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--num-mappers 1
+
+#Things to remember for split-by
+#Column should be indexed
+#values in the field should be sparse
+#also often it should be sequense generated or evenly incremented
+#should not have null values
+
+
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer_nopk \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--split-by id
+
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer_nopk \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--split-by Name
+	
+sqoop import \
+	-Dorg.apache.sqoop.slitter.allow_text_splitter=true	
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer_nopk \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--split-by Name
