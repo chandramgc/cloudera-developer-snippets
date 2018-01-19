@@ -69,3 +69,40 @@ sqoop import \
 	--table customer_nopk \
 	--warehouse-dir /user/hduser/sqoop_import \
 	--split-by Name
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--boundary-query 'select min(id), max(id) from customer where id > 60'
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer \
+	--num-mappers 2 \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--boundary-query 'select 20, 30'
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer \
+	--columns id,name \
+	--num-mappers 2 \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--boundary-query 'select 20, 30'
+
+#--query 'SET @row_number =0; select @row_number:=@row_number+1 as number, state, count(id) count from customer group by state order by @row_number;' \	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--num-mappers 2 \
+	--target-dir /user/hduser/sqoop_import/customer_query \	
+	--query 'SELECT (@row_number:=@row_number + 1) AS num, state, count(id) count from customer,(SELECT @row_number:=0) AS t group by state order by num'
+	--split-by number
