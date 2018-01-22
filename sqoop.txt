@@ -98,11 +98,55 @@ sqoop import \
 	--boundary-query 'select 20, 30'
 
 #--query 'SET @row_number =0; select @row_number:=@row_number+1 as number, state, count(id) count from customer group by state order by @row_number;' \	
+
+# table and/or columns is mutually exclusive with query
+# for query split-by is mandatory if num-mappers is greater than 1
+# query should have a placeholder \$CONDITIONS
+
 sqoop import \
 	--connect jdbc:mysql://192.168.1.91:3306/mydb \
 	--username girish \
 	--password Artha@568 \
 	--num-mappers 2 \
-	--target-dir /user/hduser/sqoop_import/customer_query \	
-	--query 'SELECT (@row_number:=@row_number + 1) AS num, state, count(id) count from customer,(SELECT @row_number:=0) AS t group by state order by num'
-	--split-by number
+	--target-dir /user/hduser/sqoop_import/customer_query \
+	--query "SELECT Id, Name, State FROM mydb.customer   where State = 'Utah' and \$CONDITIONS " \
+	--split-by Id
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table customer_nopk \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--autoreset-to-one-mappers
+
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table employees \
+	--warehouse-dir /user/hduser/sqoop_import 
+
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--table employees \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--delete-target-dir \
+	--null-non-string -1 \
+	--fields-terminated-by "\t" \
+	--lines-terminated-by ":" 
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/mydb \
+	--username girish \
+	--password Artha@568 \
+	--num-mappers 1 \
+	--table employees \
+	--warehouse-dir /user/hduser/sqoop_import \
+	--delete-target-dir \
+	--null-non-string -1 \
+	--fields-terminated-by "\000" \
+	--lines-terminated-by ":" 
+	
