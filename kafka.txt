@@ -1,0 +1,50 @@
+#Create new Consumer Group Id
+
+create a new consumer.properties file, say consumer1.properties. 
+change group.id=<Give a new group name> in the consumer.properties.
+
+$ hostname -f or the host's IP 
+
+#Step 1: Start the zookeeper server
+#Start a ZooKeeper server that's packaged with Kafka
+
+bin/zookeeper-server-start.sh config/zookeeper.properties 
+
+#Step 2: Start the kafka broker server
+
+bin/kafka-server-start.sh config/server.properties 
+
+#Step 3: Create a topic
+
+bin/kafka-topics.sh --create --zookeeper <hostname>:2181 --replication-factor 1 --partitions 1 --topic girishtp 
+
+#List the topics 
+
+bin/kafka-topics.sh --list --zookeeper <hostname>:2181 
+
+#output
+#__consumer_offsets 
+#girishtp 
+
+#Step 4: Send some messages
+#By default, each line will be sent as a separate message. Run the producer and then type a few messages into the console to send to the server.
+
+bin/kafka-console-producer.sh --broker-list <hostname>:6667 --topic girishtp
+
+#{type some random message here }
+
+#Step 5: Start a consumer
+#Kafka consumer will dump out messages to standard output(console).
+
+bin/kafka-console-consumer.sh --bootstrap-server <hostname>:9092 --topic girishtp--from-beginning
+bin/kafka-console-consumer.sh --zookeeper <hostname>:2181 --topic girishtp --from-beginning 
+bin/kafka-console-consumer.sh --zookeeper <hostname>:2181 --topic girishtp --from-beginning --consumer.config config/consumer.properties --delete-consumer-offsets
+
+#{you will see the messages typed in step 4 }
+
+#Step 6 Delete a topic
+
+bin/kafka-run-class.sh kafka.admin.TopicCommand --zookeeper <hostname>:2181 --delete --topic girishtp 
+
+#Output
+#Topic girishtp is marked for deletion.

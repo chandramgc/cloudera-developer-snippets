@@ -180,3 +180,110 @@ sqoop import \
 	--check-column order_date \
 	--incremental append \
 	--last-value '2014-02-28' 
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--num-mappers 2 \
+	--table orders \
+	--hive-import \
+	--hive-databases dgadiraju_sqoop_import \
+	--hive-table order_items 
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--num-mappers 2 \
+	--table orders \
+	--hive-import \
+	--hive-databases dgadiraju_sqoop_import \
+	--hive-overwrite \
+	--hive-table order_items
+
+#Note: create-hive-table will not create hive table. But it will throws a error if table
+#already exists
+#Note: Before loading into hive table it will load into staging table location (/user/girish/order_items)
+#In this location, staging files will be created these files should be removed else it will throws error if we run the hive command next time
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--num-mappers 2 \
+	--table orders \
+	--hive-import \
+	--hive-databases dgadiraju_sqoop_import \
+	--create-hive-table \
+	--hive-table order_items
+	
+sqoop import \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--num-mappers 2 \
+	--warehouse-dir /user/hduser/sqoop_import/retail_db \
+	--autoreset-to-one-mapper
+	
+sqoop export \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--export-dir /user/hduser/sqoop_import/retail_db \
+	--input-fields-terminated-by "\001" \
+	--table daily_revenes \
+	--columns order_date, revenue \
+	--num-mappers 2 
+	
+#Note: update-key is used to update rows form hive to relational database. update-key should be the primary key (optional)
+#It only update the data but not inserts
+sqoop export \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--export-dir /user/hduser/sqoop_import/retail_db \
+	--input-fields-terminated-by "\001" \
+	--table daily_revenes \
+	--update-key order_date \
+	--num-mappers 2 
+	
+#Note: It will allow update and inserts
+sqoop export \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--export-dir /user/hduser/sqoop_import/retail_db \
+	--input-fields-terminated-by "\001" \
+	--table daily_revenes \
+	--update-key order_date \
+	--update-mode allowinsert \
+	--num-mappers 2 
+	
+#Note: When we export records on multi-threading if 1 thread fails to load data it will not affect other thread this my leave table in consistent state mean copy partial data to avoid this we use staging-table
+#staging-table should be empty
+sqoop export \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--export-dir /user/hduser/sqoop_import/retail_db \
+	--input-fields-terminated-by "\001" \
+	--table daily_revenes \
+	--staging-table daily_revenes_stage \
+	--num-mappers 4 
+	
+sqoop export \
+	--connect jdbc:mysql://192.168.1.91:3306/retail_db \
+	--username ratail_user \
+	--password Artha@568 \
+	--export-dir /user/hduser/sqoop_import/retail_db \
+	--input-fields-terminated-by "\001" \
+	--table daily_revenes \
+	--staging-table daily_revenes_stage \
+	--clear-staging-table \
+	--num-mappers 4 
+	
+
+	
+	
+
+
