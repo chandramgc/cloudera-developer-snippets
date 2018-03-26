@@ -8,10 +8,12 @@ conf = ( SparkConf()
 sc = SparkContext( conf = conf )
 sqlContext = SQLContext(sc)
 
-myDir = "/home/girish/mycode/hadoop-developer-snippets/in"
+myDir = "/home/girish/mycode"
 
 print("***********************************************************")
 
-
+dataLoad = sqlContext.load("/home/girish/mycode/hadoop-developer-snippets/in/retail_db_json/order_items", "json")
+print("Data of Json file:\n")
+dataLoad.show()
 
 print("***********************************************************")
